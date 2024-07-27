@@ -1,0 +1,17 @@
+[package]
+name = "thread-waker"
+version = "1.0.0"
+authors = ["Douman <douman@gmx.se>"]
+edition = "2018"
+description = "Waker implementation using current thread token"
+readme = "README.md"
+repository = "https://github.com/DoumanAsh/thread-waker"
+license = "BSL-1.0"
+keywords = ["async"]
+categories = ["asynchronous"]
+include = [
+    "**/*.rs",
+    "**/*.c",
+    "Cargo.toml",
+    "README.md"
+]
