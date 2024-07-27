@@ -11,7 +11,7 @@ keywords = ["async"]
 categories = ["asynchronous"]
 include = [
     "**/*.rs",
-    "**/*.c",
     "Cargo.toml",
-    "README.md"
+    "README.md",
+    "LICENSE"
 ]
