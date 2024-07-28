@@ -1,6 +1,6 @@
 # thread-waker
 
-![Rust](https://github.com/DoumanAsh/thread-waker/workflows/Rust/badge.svg?branch=master)
+[![Rust](https://github.com/DoumanAsh/thread-waker/actions/workflows/rust.yml/badge.svg)](https://github.com/DoumanAsh/thread-waker/actions/workflows/rust.yml)
 [![Crates.io](https://img.shields.io/crates/v/thread-waker.svg)](https://crates.io/crates/thread-waker)
 [![Documentation](https://docs.rs/thread-waker/badge.svg)](https://docs.rs/crate/thread-waker/)
 
