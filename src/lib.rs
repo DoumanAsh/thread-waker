@@ -32,7 +32,8 @@
 #![allow(clippy::missing_transmute_annotations)]
 
 use core::{task, mem};
-use std::thread::Thread;
+use core::future::Future;
+use std::thread::{self, Thread};
 
 const VTABLE: task::RawWakerVTable = task::RawWakerVTable::new(clone, wake, wake_by_ref, on_drop);
 
@@ -68,5 +69,21 @@ unsafe fn wake_by_ref(thread: *const ()) {
 pub fn waker(thread: Thread) -> task::Waker {
     unsafe {
         task::Waker::from_raw(task::RawWaker::new(mem::transmute(thread), &VTABLE))
+    }
+}
+
+
+///Await for future forever via thread token
+///
+///Note that this is only viable for futures that doesn't require IO runtime
+pub fn block_on<F: Future>(fut: F) -> F::Output {
+    let waker = waker(thread::current());
+    let mut fut = core::pin::pin!(fut);
+    loop {
+        let mut context = task::Context::from_waker(&waker);
+        match Future::poll(fut.as_mut(), &mut context) {
+            task::Poll::Pending => thread::park(),
+            task::Poll::Ready(result) => break result,
+        }
     }
 }

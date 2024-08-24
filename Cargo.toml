@@ -1,6 +1,6 @@
 [package]
 name = "thread-waker"
-version = "1.0.0"
+version = "1.1.0"
 authors = ["Douman <douman@gmx.se>"]
 edition = "2018"
 description = "Waker implementation using current thread token"
