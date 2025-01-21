@@ -38,7 +38,7 @@ use std::thread::{self, Thread};
 const VTABLE: task::RawWakerVTable = task::RawWakerVTable::new(clone, wake, wake_by_ref, on_drop);
 
 unsafe fn on_drop(thread: *const ()) {
-    let thread: Thread = mem::transmute(thread);
+     let thread = Box::from_raw(thread as *mut Thread);
     drop(thread);
 }
 
@@ -46,29 +46,29 @@ unsafe fn clone(thread: *const()) -> task::RawWaker {
     //Thread handle is just simple Arc pointer to cloning it is cheap and efficient
     //but we need to make sure to forget current thread, otherwise it is no clone
     //as Clone callback is done via reference
-    let thread: Thread = mem::transmute(thread);
-    let new_ptr = mem::transmute(thread.clone());
+    let thread = Box::from_raw(thread as *mut Thread);
+    let new_ptr = thread.clone();
     mem::forget(thread);
-    task::RawWaker::new(new_ptr, &VTABLE)
+    task::RawWaker::new(Box::into_raw(new_ptr) as _, &VTABLE)
 }
 
 unsafe fn wake(thread: *const ()) {
-    let thread: Thread = mem::transmute(thread);
+    let thread = Box::from_raw(thread as *mut () as *mut Thread);
     thread.unpark();
 }
 
 unsafe fn wake_by_ref(thread: *const ()) {
-    let thread: Thread = mem::transmute(thread);
-    thread.unpark();
     //wake_by_ref should not consume self
-    mem::forget(thread);
+    let thread = &*(thread as *const Thread);
+    thread.unpark();
 }
 
 #[inline(always)]
 ///Creates waker from thread handle
 pub fn waker(thread: Thread) -> task::Waker {
+    let thread = Box::new(thread);
     unsafe {
-        task::Waker::from_raw(task::RawWaker::new(mem::transmute(thread), &VTABLE))
+        task::Waker::from_raw(task::RawWaker::new(Box::into_raw(thread) as _, &VTABLE))
     }
 }
 
